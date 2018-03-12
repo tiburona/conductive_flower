@@ -1,6 +1,7 @@
 var mic, fft
 
 var startSize = 2
+var stemHeight = 10;
 
 function setup(){
   createCanvas(710, 400);
@@ -31,39 +32,53 @@ function setup(){
 //   ellipse(width/2, h - 25, 50, 50);
 // }
 
+ pitch_reached = false;
 
- function makeFlower(startingSize, startingHeight){
-   translate(280, 200);
+ function makeFlower(startingSize, startingWidth, startingHeight){
+   translate(startingWidth, height-startingHeight);
    fill(204, 101, 192, 127);
    stroke(127, 63, 120);
    noStroke();
-   var width = startingSize
-   var height = startingSize * 4
+   var w = startingSize
+   var h = startingSize * 4
    for (var i = 0; i < 10; i ++) {
-     ellipse(0, 30, width, height);
+     ellipse(0, 30, w, h);
      rotate(PI/5);
    }
  }
 
 function draw(){
+  background(255);
+  var vol = mic.getLevel();
+  stroke(0);
+  stemHeight = stemHeight + vol;
+  fill(34,139,34)
+  rectMode(CORNERS);
+  noStroke();
+  rect(width/2-5, height, width/2+5, height-stemHeight);
 
   var spectrum = fft.analyze();
   peakDetect.update(fft)
   //console.log(peakDetect.isDetected)
 
-
-  // var vol = mic.getLevel()
-  // console.log(vol)
-
  if ( peakDetect.isDetected ) {
+   pitch_reached = true;
+
    startSize += 2
-   console.log("yay a peak")
-   //ellipse(width/2, height/2, 50, 50)
-   makeFlower(startSize, 100)
+   // console.log("yay a peak")
+   // //ellipse(width/2, height/2, 50, 50)
+   // background(255);
+   // makeFlower(startSize, stemHeight)
+ }
+
+ if (pitch_reached == true) {
+   makeFlower(startSize, width/2, stemHeight+10);
  }
 }
+
+
  // draw a flower.
 
- function drawEllipse() {
-   ellipse(width/2, height/2, 50, 50)
- }
+ // function drawEllipse() {
+ //   ellipse(width/2, height/2, 50, 50)
+ // }
